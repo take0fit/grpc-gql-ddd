@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package newmo.api.geo;
+
+option go_package = "github.com/take0fit/grpc-gql-ddd/api/geo;geo";
+
+// GeoServer は地理情報を提供する gRPC Service である
+service GeoServer {
+  // ListLocations は地理情報サービス上の地理情報を提供する RPC である
+  rpc ListLocations(ListLocationsRequest) returns (ListLocationsResponse);
+}
+
+message ListLocationsRequest {
+  // ページネーションにおけるページトークン
+  // 空ではない場合は渡されたページトークンに対応するページを返す
+  // 空の場合は「最初のページ」を返す
+  string page_token = 1;
+}
+
+message ListLocationsResponse {
+  // 地理情報
+  repeated Location locations = 1;
+  // ListLocationsRequest に渡すためのページトークン
+  // 空ではない場合は次のページが存在することを表す
+  // 空の場合は「最後のページ」であることを表す
+  string next_page_token = 2;
+}
+
+// 地理情報を表すメッセージ
+message Location {
+  // 地理情報の ID
+  string id = 1;
+  // 地理情報の名前
+  string name = 2;
+}

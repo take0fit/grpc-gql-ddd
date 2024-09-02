@@ -1,0 +1,14 @@
+type Query {
+  """
+  地理情報サービスが提供する全ての地理情報
+  """
+  locations: [Location!]!
+}
+
+type Location {
+  "地理情報の ID"
+  id: ID!
+
+  "地理情報の名前"
+  name: String!
+}

@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  gql-server:
+    build:
+      context: ../
+      dockerfile: ./docker/prd/gql.Dockerfile
+    ports:
+      - "8080:8080"
+    container_name: gql-server
+    environment:
+      - CACHE_UPDATE_INTERVAL=${CACHE_UPDATE_INTERVAL:-30}
+    networks:
+      - backend
+    depends_on:
+      - grpc-server
+    command: [ "./gql_server", "--update-interval", "${CACHE_UPDATE_INTERVAL}" ]
+
+  gql-server-debug:
+    build:
+      context: ../
+      dockerfile: ./docker/local/gql.Dockerfile
+    ports:
+      - "8080:8080"
+      - "2345:2345"
+    volumes:
+      - ../:/app
+    container_name: gql-server-debug
+    environment:
+      - CACHE_UPDATE_INTERVAL=${CACHE_UPDATE_INTERVAL:-30}
+    networks:
+      - backend
+    depends_on:
+      - grpc-server
+    command: [ "air", "-c", ".air.toml" ]
+
+  grpc-server:
+    build:
+      context: ../
+      dockerfile: ./docker/prd/grpc.Dockerfile
+    ports:
+      - "50051:50051"
+    container_name: grpc-server
+    networks:
+      - backend
+
+networks:
+  backend:
